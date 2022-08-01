@@ -1,3 +1,4 @@
+import axios from "axios";
 import React, { FC, useState } from "react";
 import { Filters } from "../models/filters";
 import { Product } from "../models/product";
@@ -9,6 +10,12 @@ interface productsProps {
   lastPage: number;
 }
 
+interface notifyProps {
+  show: boolean;
+  error: boolean;
+  message: string;
+}
+
 const Products: FC<productsProps> = ({
   products,
   filters,
@@ -16,6 +23,11 @@ const Products: FC<productsProps> = ({
   lastPage,
 }) => {
   const [selected, setSelected] = useState<number[]>([]);
+  const [notify, setNotify] = useState<notifyProps>({
+    show: false,
+    error: false,
+    message: "",
+  });
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -49,6 +61,12 @@ const Products: FC<productsProps> = ({
   };
 
   const handleSelectProduct = (id: number) => {
+    // hide message
+    setNotify({
+      ...notify,
+      show: false,
+    });
+    //
     if (selected.some((s) => s === id)) {
       // remove
       setSelected(selected.filter((s) => s !== id));
@@ -58,10 +76,46 @@ const Products: FC<productsProps> = ({
     }
   };
 
-  console.log("selected: ", selected);
+  const handleGenerateLink = async () => {
+    try {
+      const response = await axios.post("links", {
+        products: selected,
+      });
+      const { data } = response;
+      setNotify({
+        show: true,
+        error: false,
+        message: `Link generated: http://localhost:5000/${data.code}`,
+      });
+    } catch (error) {
+      console.error(error);
+      setNotify({
+        show: true,
+        error: true,
+        message: `You should be logged in to generate a link!`,
+      });
+    }
+  };
+
+  let info;
+  if (notify.show) {
+    info = (
+      <div className="col-md-12 mb-4">
+        <div
+          role={"alert"}
+          className={notify.error ? "alert alert-danger" : "alert alert-info"}
+        >
+          {notify.message}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
+      {/* alert */}
+      {info}
+      {/* end of alert */}
       <div className="col-md-12 mb-4 input-group">
         <input
           onKeyUp={handleSearch}
@@ -69,6 +123,13 @@ const Products: FC<productsProps> = ({
           className="form-control"
           placeholder="Search"
         />
+        {selected.length ? (
+          <div className="input-group-append">
+            <button className="btn btn-info" onClick={handleGenerateLink}>
+              Generate Link
+            </button>
+          </div>
+        ) : null}
         <div className="input-group-append">
           <select className="form-select" onChange={handleSort}>
             <option value="asc">Price Ascending</option>
