@@ -4,7 +4,7 @@ import { Product } from "../models/product";
 
 interface productsProps {
   products?: Product[];
-  filters?: Filters;
+  filters: Filters;
   setFilters?: (filters: Filters) => void;
 }
 
@@ -13,7 +13,18 @@ const Products: FC<productsProps> = ({ products, filters, setFilters }) => {
     const value = e.target.value;
     if (setFilters) {
       setFilters({
+        ...filters,
         s: value,
+      });
+    }
+  };
+
+  const handleSort = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = e.target.value;
+    if (setFilters) {
+      setFilters({
+        ...filters,
+        sort: value,
       });
     }
   };
@@ -27,6 +38,12 @@ const Products: FC<productsProps> = ({ products, filters, setFilters }) => {
           className="form-control"
           placeholder="Search"
         />
+        <div className="input-group-append">
+          <select className="form-select" onChange={handleSort}>
+            <option value="asc">Price Ascending</option>
+            <option value="desc">Price Descending</option>
+          </select>
+        </div>
       </div>
       <div className="row">
         {products?.map((product, index) => {

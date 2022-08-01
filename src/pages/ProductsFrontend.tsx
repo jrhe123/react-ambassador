@@ -3,11 +3,14 @@ import Layout from "../components/Layout";
 import Products from "./Products";
 import axios from "axios";
 import { Product } from "../models/product";
+import { Filters } from "../models/filters";
+
 function ProductsFrontend() {
   const [allProducts, setAllProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
-  const [filters, setFilters] = useState({
+  const [filters, setFilters] = useState<Filters>({
     s: "",
+    sort: "",
   });
 
   useEffect(() => {
@@ -30,6 +33,28 @@ function ProductsFrontend() {
       }
       return null;
     });
+
+    if (filters.sort === "asc") {
+      products.sort((a, b) => {
+        if (a.price > b.price) {
+          return 1;
+        }
+        if (a.price < b.price) {
+          return -1;
+        }
+        return 0;
+      });
+    } else if (filters.sort === "desc") {
+      products.sort((a, b) => {
+        if (a.price > b.price) {
+          return -1;
+        }
+        if (a.price < b.price) {
+          return 1;
+        }
+        return 0;
+      });
+    }
     setFilteredProducts(products);
   }, [filters]);
 

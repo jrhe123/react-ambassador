@@ -3,11 +3,13 @@ import Layout from "../components/Layout";
 import Products from "./Products";
 import axios from "axios";
 import { Product } from "../models/product";
+import { Filters } from "../models/filters";
 
 function ProductsBackend() {
   const [products, setProducts] = useState<Product[]>([]);
-  const [filters, setFilters] = useState({
+  const [filters, setFilters] = useState<Filters>({
     s: "",
+    sort: "",
   });
 
   useEffect(() => {
@@ -16,6 +18,9 @@ function ProductsBackend() {
       const arr = [];
       if (filters.s) {
         arr.push(`s=${filters.s}`);
+      }
+      if (filters.sort) {
+        arr.push(`sort=${filters.sort}`);
       }
       const response = await axios.get(`products/backend?${arr.join("&")}`);
       const data = response.data;
