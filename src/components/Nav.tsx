@@ -21,6 +21,9 @@ const Nav: FC<NavProps> = ({ user, setUserDispatch }) => {
     menu = (
       <div className="col-md-3 text-end">
         <div style={{ display: "flex", flexDirection: "row" }}>
+          <Link to={"/stats"} className="btn me-2">
+            Stats
+          </Link>
           <a
             href="#"
             onClick={handleLogout}
