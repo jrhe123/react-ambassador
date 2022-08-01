@@ -4,19 +4,42 @@ import Products from "./Products";
 import axios from "axios";
 import { Product } from "../models/product";
 function ProductsFrontend() {
-  const [products, setProducts] = useState<Product[]>([]);
+  const [allProducts, setAllProducts] = useState<Product[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+  const [filters, setFilters] = useState({
+    s: "",
+  });
 
   useEffect(() => {
     (async () => {
+      // all products
       const response = await axios.get("products/frontend");
       const data = response.data;
-      setProducts(data);
+      setAllProducts(data);
+      setFilteredProducts(data);
     })();
   }, []);
 
+  useEffect(() => {
+    let products = allProducts.filter((p) => {
+      if (
+        p.title.toLowerCase().indexOf(filters.s.toLowerCase()) !== -1 ||
+        p.description.toLowerCase().indexOf(filters.s.toLowerCase()) !== -1
+      ) {
+        return p;
+      }
+      return null;
+    });
+    setFilteredProducts(products);
+  }, [filters]);
+
   return (
     <Layout>
-      <Products products={products} />
+      <Products
+        products={filteredProducts}
+        filters={filters}
+        setFilters={setFilters}
+      />
     </Layout>
   );
 }
