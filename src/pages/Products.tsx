@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { FC, useState } from "react";
 import { Filters } from "../models/filters";
 import { Product } from "../models/product";
 
@@ -15,6 +15,8 @@ const Products: FC<productsProps> = ({
   setFilters,
   lastPage,
 }) => {
+  const [selected, setSelected] = useState<number[]>([]);
+
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     if (setFilters) {
@@ -46,6 +48,18 @@ const Products: FC<productsProps> = ({
     }
   };
 
+  const handleSelectProduct = (id: number) => {
+    if (selected.some((s) => s === id)) {
+      // remove
+      setSelected(selected.filter((s) => s !== id));
+    } else {
+      // all
+      setSelected([...selected, id]);
+    }
+  };
+
+  console.log("selected: ", selected);
+
   return (
     <>
       <div className="col-md-12 mb-4 input-group">
@@ -64,9 +78,20 @@ const Products: FC<productsProps> = ({
       </div>
       <div className="row">
         {products?.map((product, index) => {
+          const selectedStyle = selected.some((s) => s === product.id);
           return (
-            <div className="col-md-4" key={index}>
-              <div className="card mb-4 box-shadow">
+            <div
+              className="col-md-4"
+              key={index}
+              onClick={() => handleSelectProduct(product.id)}
+            >
+              <div
+                className={
+                  selectedStyle
+                    ? "card mb-4 box-shadow selected"
+                    : "card mb-4 box-shadow"
+                }
+              >
                 <img
                   className="card-img-top"
                   src={product.image}
