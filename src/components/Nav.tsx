@@ -24,6 +24,9 @@ const Nav: FC<NavProps> = ({ user, setUserDispatch }) => {
           <Link to={"/stats"} className="btn me-2">
             Stats
           </Link>
+          <Link to={"/rankings"} className="btn me-2">
+            Rankings
+          </Link>
           <a
             href="#"
             onClick={handleLogout}

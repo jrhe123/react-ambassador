@@ -4,6 +4,7 @@ import "./App.css";
 import Login from "./pages/Login";
 import ProductsFrontend from "./pages/ProductsFrontend";
 import Profile from "./pages/Profile";
+import Rankings from "./pages/Rankings";
 import Register from "./pages/Register";
 import Stats from "./pages/Stats";
 
@@ -17,6 +18,7 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/stats" element={<Stats />} />
+          <Route path="/rankings" element={<Rankings />} />
         </Routes>
       </BrowserRouter>
     </div>
