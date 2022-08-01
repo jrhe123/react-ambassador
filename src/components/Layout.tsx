@@ -13,22 +13,16 @@ interface LayoutProps {
 }
 
 const Layout: FC<LayoutProps> = ({ children, setUserDispatch }) => {
-  const [redirect, setRedirect] = useState<boolean>(false);
-
   useEffect(() => {
     (async () => {
       try {
         const response = await axios.get("user");
         setUserDispatch(response.data);
       } catch (error) {
-        setRedirect(true);
+        console.error(error);
       }
     })();
   }, []);
-
-  if (redirect) {
-    return <Navigate to="/login" replace />;
-  }
 
   return (
     <div>

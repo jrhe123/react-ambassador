@@ -1,78 +1,74 @@
-import React from "react";
+import React, { Dispatch, FC } from "react";
+import { User } from "../models/user";
+import { connect } from "react-redux";
+import { Link } from "react-router-dom";
+import axios from "axios";
 
-function Nav() {
-  return (
-    <header>
-      <div className="collapse bg-dark" id="navbarHeader">
-        <div className="container">
-          <div className="row">
-            <div className="col-sm-8 col-md-7 py-4">
-              <h4 className="text-white">About</h4>
-              <p className="text-muted">
-                Add some information about the album below, the author, or any
-                other background context. Make it a few sentences long so folks
-                can pick up some informative tidbits. Then, link them off to
-                some social networking sites or contact information.
-              </p>
-            </div>
-            <div className="col-sm-4 offset-md-1 py-4">
-              <h4 className="text-white">Contact</h4>
-              <ul className="list-unstyled">
-                <li>
-                  <a href="#" className="text-white">
-                    Follow on Twitter
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="text-white">
-                    Like on Facebook
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="text-white">
-                    Email me
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div className="navbar navbar-dark bg-dark box-shadow">
-        <div className="container d-flex justify-content-between">
-          <a href="#" className="navbar-brand d-flex align-items-center">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              className="mr-2"
-            >
-              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
-              <circle cx="12" cy="13" r="4"></circle>
-            </svg>
-            <strong>Album</strong>
-          </a>
-          <button
-            className="navbar-toggler"
-            type="button"
-            data-toggle="collapse"
-            data-target="#navbarHeader"
-            aria-controls="navbarHeader"
-            aria-expanded="false"
-            aria-label="Toggle navigation"
-          >
-            <span className="navbar-toggler-icon"></span>
-          </button>
-        </div>
-      </div>
-    </header>
-  );
+interface NavProps {
+  user: User;
 }
 
-export default Nav;
+const Nav: FC<NavProps> = ({ user }) => {
+  const handleLogout = async () => {
+    await axios.post("logout");
+  };
+
+  let menu;
+  if (user.id) {
+    menu = (
+      <div className="col-md-3 text-end">
+        <div style={{ display: "flex", flexDirection: "row" }}>
+          <Link
+            onClick={handleLogout}
+            className="btn btn-outline-primary me-2"
+            to={"/login"}
+          >
+            Logout
+          </Link>
+          <Link className="btn btn-primary" to={"/profile"}>
+            {user.first_name} {user.last_name}
+          </Link>
+        </div>
+      </div>
+    );
+  } else {
+    menu = (
+      <div className="col-md-3 text-end">
+        <Link to={"/login"} className="btn btn-outline-primary me-2">
+          Login
+        </Link>
+        <Link to={"/register"} className="btn btn-primary">
+          Sign-up
+        </Link>
+      </div>
+    );
+  }
+
+  return (
+    <div className="container">
+      <header className="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
+        <ul className="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
+          <li>
+            <a href="#" className="nav-link px-2 link-secondary">
+              Frontend
+            </a>
+          </li>
+          <li>
+            <a href="#" className="nav-link px-2 link-dark">
+              Backend
+            </a>
+          </li>
+        </ul>
+        {menu}
+      </header>
+    </div>
+  );
+};
+
+const mapStateToProps = (state: { user: User }) => ({
+  user: state.user,
+});
+
+const mapDispatchToProps = (dispatch: Dispatch<any>) => ({});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Nav);
