@@ -3,14 +3,15 @@ import Layout from "../components/Layout";
 import Products from "./Products";
 import axios from "axios";
 import { Product } from "../models/product";
-function ProductsFrontend() {
+
+function ProductsBackend() {
   const [products, setProducts] = useState<Product[]>([]);
 
   useEffect(() => {
     (async () => {
-      const response = await axios.get("products/frontend");
+      const response = await axios.get("products/backend");
       const data = response.data;
-      setProducts(data);
+      setProducts(data.data);
     })();
   }, []);
 
@@ -21,4 +22,4 @@ function ProductsFrontend() {
   );
 }
 
-export default ProductsFrontend;
+export default ProductsBackend;
