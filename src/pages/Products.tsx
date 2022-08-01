@@ -6,15 +6,22 @@ interface productsProps {
   products?: Product[];
   filters: Filters;
   setFilters?: (filters: Filters) => void;
+  lastPage: number;
 }
 
-const Products: FC<productsProps> = ({ products, filters, setFilters }) => {
+const Products: FC<productsProps> = ({
+  products,
+  filters,
+  setFilters,
+  lastPage,
+}) => {
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     if (setFilters) {
       setFilters({
         ...filters,
         s: value,
+        page: 1,
       });
     }
   };
@@ -25,6 +32,16 @@ const Products: FC<productsProps> = ({ products, filters, setFilters }) => {
       setFilters({
         ...filters,
         sort: value,
+        page: 1,
+      });
+    }
+  };
+
+  const handleLoadMore = (event: React.MouseEvent<HTMLButtonElement>) => {
+    if (setFilters) {
+      setFilters({
+        ...filters,
+        page: filters.page + 1,
       });
     }
   };
@@ -67,6 +84,14 @@ const Products: FC<productsProps> = ({ products, filters, setFilters }) => {
           );
         })}
       </div>
+
+      {filters.page !== lastPage && (
+        <div className="d-flex justify-content-center mt-4">
+          <button onClick={handleLoadMore} className="btn btn-primary">
+            Load More
+          </button>
+        </div>
+      )}
     </>
   );
 };
