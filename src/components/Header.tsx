@@ -1,26 +1,60 @@
-import React from "react";
+import React, { Dispatch, useState, FC, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { User } from "../models/user";
+import { connect } from "react-redux";
 
-function Header() {
+interface formProps {
+  title: string;
+  description: string;
+}
+
+interface HeaderProps {
+  user: User;
+}
+
+const Header: FC<HeaderProps> = ({ user }) => {
+  const [form, setForm] = useState<formProps>({
+    title: "Welcome",
+    description: "Share links to earn money",
+  });
+
+  useEffect(() => {
+    if (user.id) {
+      setForm({
+        title: `$${user.revenue}`,
+        description: "You have earned this far",
+      });
+    } else {
+      setForm({
+        title: `Welcome`,
+        description: "Share links to earn money",
+      });
+    }
+  }, [user]);
+
   return (
     <section className="jumbotron text-center">
       <div className="container">
-        <h1 className="jumbotron-heading">Album example</h1>
-        <p className="lead text-muted">
-          Something short and leading about the collection below—its contents,
-          the creator, etc. Make it short and sweet, but not too short so folks
-          don't simply skip over it entirely.
-        </p>
-        <p>
-          <a href="#" className="btn btn-primary my-2">
-            Main call to action
-          </a>
-          <a href="#" className="btn btn-secondary my-2">
-            Secondary action
-          </a>
-        </p>
+        <h1 className="jumbotron-heading">{form.title}</h1>
+        <p className="lead text-muted">{form.description}</p>
+        {!user.id && (
+          <p>
+            <Link to={"/login"} className="btn btn-primary my-2">
+              Login
+            </Link>
+            <Link to={"/register"} className="btn btn-secondary my-2">
+              Register
+            </Link>
+          </p>
+        )}
       </div>
     </section>
   );
-}
+};
+const mapStateToProps = (state: { user: User }) => ({
+  user: state.user,
+});
 
-export default Header;
+const mapDispatchToProps = (dispatch: Dispatch<any>) => ({});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Header);

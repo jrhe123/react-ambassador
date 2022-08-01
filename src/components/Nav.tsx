@@ -3,14 +3,17 @@ import { User } from "../models/user";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import { setUser } from "../redux/actions/setUserAction";
 
 interface NavProps {
   user: User;
+  setUserDispatch: (user: User) => void;
 }
 
-const Nav: FC<NavProps> = ({ user }) => {
+const Nav: FC<NavProps> = ({ user, setUserDispatch }) => {
   const handleLogout = async () => {
     await axios.post("logout");
+    setUserDispatch(new User());
   };
 
   let menu;
@@ -18,13 +21,13 @@ const Nav: FC<NavProps> = ({ user }) => {
     menu = (
       <div className="col-md-3 text-end">
         <div style={{ display: "flex", flexDirection: "row" }}>
-          <Link
+          <a
+            href="#"
             onClick={handleLogout}
             className="btn btn-outline-primary me-2"
-            to={"/login"}
           >
             Logout
-          </Link>
+          </a>
           <Link className="btn btn-primary" to={"/profile"}>
             {user.first_name} {user.last_name}
           </Link>
@@ -69,6 +72,8 @@ const mapStateToProps = (state: { user: User }) => ({
   user: state.user,
 });
 
-const mapDispatchToProps = (dispatch: Dispatch<any>) => ({});
+const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
+  setUserDispatch: (user: User) => dispatch(setUser(user)),
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(Nav);
